@@ -314,9 +314,8 @@ cw1::t1_callback(
   // 2. Move above object
   if (!move_arm_to_pose(arm, make_pose(obj_x, obj_y, safe_z))) return;
 
-  // 3. Temporary comparison mode: use normal planning instead of Cartesian descent.
-  // if (!cartesian_move(arm, make_pose(obj_x, obj_y, grasp_z))) {
-  if (!move_arm_to_pose(arm, make_pose(obj_x, obj_y, grasp_z))) {
+  // 3. Cartesian descend to grasp height
+  if (!cartesian_move(arm, make_pose(obj_x, obj_y, grasp_z))) {
     return;
   }
 
@@ -325,18 +324,16 @@ cw1::t1_callback(
     return;
   }
 
-  // 5. Temporary comparison mode: use normal planning instead of Cartesian lift.
-  // if (!cartesian_move(arm, make_pose(obj_x, obj_y, safe_z))) {
-  if (!move_arm_to_pose(arm, make_pose(obj_x, obj_y, safe_z))) {
+  // 5. Lift object
+  if (!cartesian_move(arm, make_pose(obj_x, obj_y, safe_z))) {
     return;
   }
 
   // 6. Move above basket
   if (!move_arm_to_pose(arm, make_pose(goal_x, goal_y, place_safe_z))) return;
 
-  // 7. Temporary comparison mode: use normal planning instead of Cartesian placement descent.
-  // if (!cartesian_move(arm, make_pose(goal_x, goal_y, place_z))) {
-  if (!move_arm_to_pose(arm, make_pose(goal_x, goal_y, place_z))) {
+  // 7. Descend to place height
+  if (!cartesian_move(arm, make_pose(goal_x, goal_y, place_z))) {
     return;
   }
 
