@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(cw1_team_x)
+project(cw1_team_8)
 
 if(POLICY CMP0074)
   cmake_policy(SET CMP0074 NEW)
@@ -86,12 +86,12 @@ target_link_libraries(cw1_solution_node
   ${PROJECT_NAME}_cw1_class_lib
 )
 
-rosidl_get_typesupport_target(cw1_team_x_typesupport_target
+rosidl_get_typesupport_target(cw1_team_8_typesupport_target
   ${PROJECT_NAME} "rosidl_typesupport_cpp")
 target_link_libraries(${PROJECT_NAME}_cw1_class_lib
-  ${cw1_team_x_typesupport_target})
+  ${cw1_team_8_typesupport_target})
 target_link_libraries(cw1_solution_node
-  ${cw1_team_x_typesupport_target})
+  ${cw1_team_8_typesupport_target})
 
 install(TARGETS
   ${PROJECT_NAME}_cw1_class_lib

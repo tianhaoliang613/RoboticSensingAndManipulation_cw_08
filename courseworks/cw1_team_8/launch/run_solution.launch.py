@@ -28,6 +28,8 @@ def generate_launch_description():
     enable_task1_snap = LaunchConfiguration('enable_task1_snap')
     return_home_between_pick_place = LaunchConfiguration('return_home_between_pick_place')
     return_home_after_pick_place = LaunchConfiguration('return_home_after_pick_place')
+    # Custom task-tuning parameters from cw1_class.h. Declaring them here makes
+    # them configurable from `ros2 launch ... name:=value` without editing C++.
     pick_offset_z = LaunchConfiguration('pick_offset_z')
     task3_pick_offset_z = LaunchConfiguration('task3_pick_offset_z')
     place_offset_z = LaunchConfiguration('place_offset_z')
@@ -62,12 +64,13 @@ def generate_launch_description():
         DeclareLaunchArgument('enable_task1_snap', default_value='false'),
         DeclareLaunchArgument('return_home_between_pick_place', default_value='false'),
         DeclareLaunchArgument('return_home_after_pick_place', default_value='false'),
-        DeclareLaunchArgument('pick_offset_z', default_value='0.12'),
+        # Expose custom C++ tuning parameters as launch arguments.
+        DeclareLaunchArgument('pick_offset_z', default_value='0.25'),
         DeclareLaunchArgument('task3_pick_offset_z', default_value='0.13'),
-        DeclareLaunchArgument('place_offset_z', default_value='0.35'),
-        DeclareLaunchArgument('grasp_approach_offset_z', default_value='0.015'),
+        DeclareLaunchArgument('place_offset_z', default_value='0.25'),
+        DeclareLaunchArgument('grasp_approach_offset_z', default_value='0.10'),
         DeclareLaunchArgument('post_grasp_lift_z', default_value='0.05'),
-        DeclareLaunchArgument('gripper_grasp_width', default_value='0.03'),
+        DeclareLaunchArgument('gripper_grasp_width', default_value='0.01'),
         DeclareLaunchArgument('task2_capture_enabled', default_value='false'),
         DeclareLaunchArgument('task2_capture_dir', default_value='/tmp/cw1_task2_capture'),
 
@@ -101,7 +104,7 @@ def generate_launch_description():
         ),
 
         Node(
-            package='cw1_team_x',
+            package='cw1_team_8',
             executable='cw1_solution_node',
             name='cw1_solution_node',
             output='screen',
@@ -118,6 +121,7 @@ def generate_launch_description():
                 'enable_task1_snap': enable_task1_snap,
                 'return_home_between_pick_place': return_home_between_pick_place,
                 'return_home_after_pick_place': return_home_after_pick_place,
+                # Forward the launch arguments into the ROS node parameters.
                 'pick_offset_z': pick_offset_z,
                 'task3_pick_offset_z': task3_pick_offset_z,
                 'place_offset_z': place_offset_z,

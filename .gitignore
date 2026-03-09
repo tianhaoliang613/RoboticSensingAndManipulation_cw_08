@@ -1,0 +1,22 @@
+# Build artifacts
+build/
+install/
+log/
+courseworks/build/
+courseworks/install/
+courseworks/log/
+
+# Generated workspace files
+courseworks/cw1_team_8/compile_commands.json
+
+# Editor and local tooling
+.clangd
+.cursor/
+.vscode/
+
+# Personal notes and local logs
+outline.md
+task1_debug_history.md
+task1_verify_launch.log
+COMP0250-S26__CW1.pdf
+*:Zone.Identifier

@@ -1,37 +1,34 @@
-# comp0250_s26_labs
-Labs and coursework code for COMP0250
+# RoboticSensingAndManipulation CW1
 
-Currently contains the code for coursework 1. Coursework 2 will follow.
+ROS 2 / MoveIt coursework workspace for COMP0250. The main implementation is in
+`courseworks/cw1_team_8`.
 
-In your home directory (locally or on the GPU servers) type
-```
-git clone https://github.com/surgical-vision/comp0250_s26_labs.git
-```
+## Repository Structure
 
-If you've done this previously do the following to pull code that has been added (in the master branch):
+- `courseworks/cw1_team_8`: solution package containing the node, helper
+  functions, launch file, and package configuration
+- `courseworks/cw1_world_spawner`: task generation and service trigger package
+- `courseworks/rpl_panda_with_rs`: Panda, Gazebo, and camera launch stack
 
-```
-cd ~/comp0250_s26_labs
-git pull origin master
-```
+## Dependencies
 
-## ROS 2 dependency install (required once)
+This workspace expects ROS 2 Humble together with the MoveIt and PCL packages
+used by the coursework.
 
 ```bash
-./scripts/install_ros2_deps.sh
 sudo apt-get install -y \
   ros-humble-moveit \
   ros-humble-moveit-core \
-  ros-humble-moveit-ros-planning-interface
-sudo apt-get install -y \
+  ros-humble-moveit-ros-planning-interface \
   ros-humble-pcl-ros \
   ros-humble-pcl-conversions \
-  ros-humble-point-cloud-transport
-sudo apt-get install -y ros-humble-gazebo-ros2-control
-sudo apt-get install -y python3-catkin-pkg python3-catkin-pkg-modules
+  ros-humble-point-cloud-transport \
+  ros-humble-gazebo-ros2-control \
+  python3-catkin-pkg \
+  python3-catkin-pkg-modules
 ```
 
-Optional camera-processing packages (not needed for current baseline):
+Optional camera-processing packages:
 
 ```bash
 sudo apt-get install -y \
@@ -39,57 +36,76 @@ sudo apt-get install -y \
   ros-humble-depth-image-proc
 ```
 
-If you use Conda, run `conda deactivate` before ROS2 build/launch.
+If you use Conda, run `conda deactivate` before building or launching.
 
-
-## ROS 2 build
+## Build
 
 ```bash
-cd ~/comp0250_S26_labs
+cd /home/leander/comp0250_s26_labs
 source /opt/ros/humble/setup.bash
-colcon build --mixin release
+colcon build --packages-select cw1_team_8 --mixin release
 source install/setup.bash
 ```
 
+## Launch
 
-**YOU MUST RENAME THE DIRECTORY cw1_team_x to your team number and amend the following command appropriately**
-## ROS 2 launch: `cw1_team_x`
-
-Use this command to run your solution to the coursework:
+Open a first terminal and run:
 
 ```bash
-cd ~/comp0250_S26_labs
+cd /home/leander/comp0250_s26_labs
 source /opt/ros/humble/setup.bash
 source install/setup.bash
-export PATH=/usr/bin:$PATH
 export RMW_FASTRTPS_USE_SHM=0
-ros2 launch cw1_team_x run_solution.launch.py \
+ros2 launch cw1_team_8 run_solution.launch.py \
   use_gazebo_gui:=true use_rviz:=true \
   enable_realsense:=true enable_camera_processing:=false \
   control_mode:=effort
 ```
-## ROS 2 command: Task 1
+
+This launches Gazebo, MoveIt, the controllers, `cw1_world_spawner`, and
+`cw1_solution_node`.
+
+## Trigger a Task
+
+Open a second terminal after the system is ready:
+
+```bash
+cd /home/leander/comp0250_s26_labs
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+```
+
+Then call `/task`:
+
+Task 1:
 
 ```bash
 ros2 service call /task cw1_world_spawner/srv/TaskSetup "{task_index: 1}"
 ```
 
-Task 1 scenario 2 only:
-
-```bash
-ros2 service call /task cw1_world_spawner/srv/TaskSetup "{task_index: 111}"
-```
-
-## ROS 2 test command: Task 2
+Task 2:
 
 ```bash
 ros2 service call /task cw1_world_spawner/srv/TaskSetup "{task_index: 2}"
 ```
 
-## ROS 2 test command: Task 3
+Task 3:
 
 ```bash
 ros2 service call /task cw1_world_spawner/srv/TaskSetup "{task_index: 3}"
+```
 
+## Main Files
 
+- `courseworks/cw1_team_8/src/cw1_class.cpp`
+- `courseworks/cw1_team_8/include/cw1_class.h`
+- `courseworks/cw1_team_8/src/cw1_node.cpp`
+- `courseworks/cw1_team_8/launch/run_solution.launch.py`
 
+## Notes
+
+- The solution node provides `/task1_start`, `/task2_start`, and `/task3_start`,
+  but these are normally called by `cw1_world_spawner` after you trigger
+  `/task`.
+- For a clean GitHub repository, generated directories such as `build/`,
+  `install/`, and `log/` are usually excluded from version control.

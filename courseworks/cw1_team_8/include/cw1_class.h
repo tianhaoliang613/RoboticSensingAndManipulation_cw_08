@@ -14,12 +14,19 @@ solution is contained within the cw1_team_<your_team_number> package */
 #include <string>
 
 #include <rclcpp/rclcpp.hpp>
+#include <geometry_msgs/msg/pose.hpp>
+#include <moveit/move_group_interface/move_group_interface.h>
 #include <sensor_msgs/msg/joint_state.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
 #include "cw1_world_spawner/srv/task1_service.hpp"
 #include "cw1_world_spawner/srv/task2_service.hpp"
 #include "cw1_world_spawner/srv/task3_service.hpp"
+
+namespace moveit::core
+{
+class RobotState;
+}
 
 class cw1
 {
@@ -40,6 +47,21 @@ public:
   void t3_callback(
     const std::shared_ptr<cw1_world_spawner::srv::Task3Service::Request> request,
     std::shared_ptr<cw1_world_spawner::srv::Task3Service::Response> response);
+
+  bool execute_plan(
+    moveit::planning_interface::MoveGroupInterface &group);
+  bool move_arm_to_pose(
+    moveit::planning_interface::MoveGroupInterface &arm,
+    const geometry_msgs::msg::Pose &target,
+    const moveit::core::RobotState *start_state = nullptr,
+    const char *target_link = "panda_hand");
+  bool cartesian_move(
+    moveit::planning_interface::MoveGroupInterface &arm,
+    const geometry_msgs::msg::Pose &target);
+  bool set_gripper(
+    moveit::planning_interface::MoveGroupInterface &hand,
+    double total_width);
+  geometry_msgs::msg::Pose make_pose(double x, double y, double z);
 
   /* ----- class member variables ----- */
 
@@ -73,12 +95,21 @@ public:
   double cartesian_eef_step_ = 0.005;
   double cartesian_jump_threshold_ = 0.0;
   double cartesian_min_fraction_ = 0.98;
-  double pick_offset_z_ = 0.12;
-  double task3_pick_offset_z_ = 0.13;
-  double place_offset_z_ = 0.35;
-  double grasp_approach_offset_z_ = 0.015;
-  double post_grasp_lift_z_ = 0.05;
-  double gripper_grasp_width_ = 0.03;
+
+  /////////////////////////////////////////////////////////////////////////////
+  // Custom task-tuning parameters added in this solution.
+  // These are not part of the coursework service request. We introduced them
+  // so the pick-and-place strategy can be tuned from the launch file without
+  // editing C++ every time.
+  /////////////////////////////////////////////////////////////////////////////
+  double pick_offset_z_ = 0.25;            // Task 1 safe approach height: keep panda_hand 25 cm above the cube centre before descending.
+  double task3_pick_offset_z_ = 0.13;      // Reserved for Task 3: separate grasp approach height so Task 3 can be tuned independently of Task 1.
+  double place_offset_z_ = 0.25;           // Safe pre-place height: move above the basket before the final downward motion.
+  double grasp_approach_offset_z_ = 0.10;  // Grasp height: chosen from hand geometry so the fingertips sit near the cube centre.
+  double post_grasp_lift_z_ = 0.05;        // Additional lift after grasp: raise the cube 5 cm before translating toward the basket.
+  double gripper_grasp_width_ = 0.01;      // Close-gripper target width: almost closed, but still lets the fingers stop on the 4 cm cube.
+  /////////////////////////////////////////////////////////////////////////////
+
   double joint_state_wait_timeout_sec_ = 2.0;
 
   std::string task2_capture_dir_ = "/tmp/cw1_task2_capture";
