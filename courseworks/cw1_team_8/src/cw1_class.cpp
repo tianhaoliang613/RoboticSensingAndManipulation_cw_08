@@ -230,10 +230,6 @@ cw1::set_gripper(
 {
   const double per_finger = total_width / 2.0;
   std::vector<double> joint_values = hand.getCurrentJointValues();
-  if (joint_values.size() < 2) {
-    RCLCPP_ERROR(node_->get_logger(), "Hand joint vector is smaller than expected");
-    return false;
-  }
   joint_values[0] = per_finger;
   joint_values[1] = per_finger;
   hand.setStartStateToCurrentState();
