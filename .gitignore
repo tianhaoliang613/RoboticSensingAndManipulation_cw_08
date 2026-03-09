@@ -8,6 +8,7 @@ courseworks/log/
 
 # Generated workspace files
 courseworks/cw1_team_8/compile_commands.json
+courseworks/cw1_team_8/.cache/
 
 # Editor and local tooling
 .clangd
