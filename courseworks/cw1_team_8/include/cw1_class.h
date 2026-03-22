@@ -11,6 +11,7 @@ solution is contained within the cw1_team_<your_team_number> package */
 #include <atomic>
 #include <cstdint>
 #include <memory>
+#include <mutex>
 #include <string>
 
 #include <rclcpp/rclcpp.hpp>
@@ -18,6 +19,8 @@ solution is contained within the cw1_team_<your_team_number> package */
 #include <moveit/move_group_interface/move_group_interface.h>
 #include <sensor_msgs/msg/joint_state.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
+#include <tf2_ros/buffer.h>
+#include <tf2_ros/transform_listener.h>
 
 #include "cw1_world_spawner/srv/task1_service.hpp"
 #include "cw1_world_spawner/srv/task2_service.hpp"
@@ -79,6 +82,13 @@ public:
   std::atomic<uint64_t> joint_state_msg_count_{0};
   std::atomic<int64_t> latest_cloud_stamp_ns_{0};
   std::atomic<uint64_t> cloud_msg_count_{0};
+  sensor_msgs::msg::PointCloud2::ConstSharedPtr latest_cloud_msg_;
+  std::mutex latest_cloud_msg_mutex_;
+
+  // tf2 坐标变换：Buffer 缓存所有 TF 变换关系，TransformListener 自动订阅 /tf 话题填充 Buffer。
+  // 我们在 t2_callback 中用 Buffer 把点云从相机坐标系 (depth) 变换到世界坐标系 (panda_link0)。
+  std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
+  std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
 
   // Runtime parameters (compatibility scaffold with cw1_team_0).
   bool enable_cloud_viewer_ = false;
