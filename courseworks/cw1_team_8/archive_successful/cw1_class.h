@@ -64,14 +64,6 @@ public:
     double total_width);
   geometry_msgs::msg::Pose make_pose(double x, double y, double z);
 
-  // Returns "red", "blue", "purple", or "" (no match).
-  static std::string classify_color(double r, double g, double b);
-
-  // Applies standard arm + hand planning parameters used by Task 1 and Task 3.
-  void setup_arm_hand(
-    moveit::planning_interface::MoveGroupInterface &arm,
-    moveit::planning_interface::MoveGroupInterface &hand);
-
   /* ----- class member variables ----- */
 
   rclcpp::Node::SharedPtr node_;
@@ -86,7 +78,7 @@ public:
   tf2_ros::Buffer tf_buffer_;
   tf2_ros::TransformListener tf_listener_;
 
-  // Last sensor message stamps / counts (optional diagnostics).
+  // Sensor callback state bookkeeping for template diagnostics.
   std::atomic<int64_t> latest_joint_state_stamp_ns_{0};
   std::atomic<uint64_t> joint_state_msg_count_{0};
   std::atomic<int64_t> latest_cloud_stamp_ns_{0};
@@ -108,13 +100,20 @@ public:
   double cartesian_jump_threshold_ = 0.0;
   double cartesian_min_fraction_ = 0.98;
 
-  // Pick/place tuning via parameters (see launch file).
-  double pick_offset_z_ = 0.25;
-  double task3_pick_offset_z_ = 0.13;
-  double place_offset_z_ = 0.25;
-  double grasp_approach_offset_z_ = 0.10;
-  double post_grasp_lift_z_ = 0.05;
-  double gripper_grasp_width_ = 0.035;
+  /////////////////////////////////////////////////////////////////////////////
+  // Custom task-tuning parameters added in this solution.
+  // These are not part of the coursework service request. We introduced them
+  // so the pick-and-place strategy can be tuned from the launch file without
+  // editing C++ every time.
+  /////////////////////////////////////////////////////////////////////////////
+  double pick_offset_z_ = 0.25;            // Task 1 safe approach height: keep panda_hand 25 cm above the cube centre before descending.
+  double task3_pick_offset_z_ = 0.13;      // Reserved for Task 3: separate grasp approach height so Task 3 can be tuned independently of Task 1.
+  double place_offset_z_ = 0.25;           // Safe pre-place height: move above the basket before the final downward motion.
+  double grasp_approach_offset_z_ = 0.10;  // Grasp height: chosen from hand geometry so the fingertips sit near the cube centre.
+  double post_grasp_lift_z_ = 0.05;        // Additional lift after grasp: raise the cube 5 cm before translating toward the basket.
+  double gripper_grasp_width_ = 0.04;      // Close-gripper target width: matches cube width (4 cm) so the controller reaches its
+                                           // target cleanly without timing out against an unreachable position.
+  /////////////////////////////////////////////////////////////////////////////
 
   double joint_state_wait_timeout_sec_ = 2.0;
 

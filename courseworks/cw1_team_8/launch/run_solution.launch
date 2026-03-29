@@ -13,8 +13,8 @@
 		<arg name="models_dir" value="$(arg models_dir)"/>
 	</include>
 	
-	<!-- launch the cw solving node, change pkg to your team name here -->
-  <node pkg="cw1_team_x"
+	<!-- launch the cw solving node -->
+  <node pkg="cw1_team_8"
         name="cw1_solution_node"
         type="cw1_solution_node"
         output="screen"

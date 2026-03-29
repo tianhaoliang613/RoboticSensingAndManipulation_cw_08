@@ -70,7 +70,7 @@ def generate_launch_description():
         DeclareLaunchArgument('place_offset_z', default_value='0.25'),
         DeclareLaunchArgument('grasp_approach_offset_z', default_value='0.10'),
         DeclareLaunchArgument('post_grasp_lift_z', default_value='0.05'),
-        DeclareLaunchArgument('gripper_grasp_width', default_value='0.01'),
+        DeclareLaunchArgument('gripper_grasp_width', default_value='0.035'),
         DeclareLaunchArgument('task2_capture_enabled', default_value='false'),
         DeclareLaunchArgument('task2_capture_dir', default_value='/tmp/cw1_task2_capture'),
 
